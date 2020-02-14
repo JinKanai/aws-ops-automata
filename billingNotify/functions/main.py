@@ -1,3 +1,5 @@
+import os
+
 from aws_billing_checker import AwsBillingChecker
 from tocaro_handler import TocaroHandler
 from fx_market_store import FxMarketStore
@@ -10,7 +12,7 @@ def lambda_handler(event, context):
 
     tocaro = TocaroHandler()
 
-    tocaro.set_text("VORTEX-AWS " + str(ce.today.month) + "月の利用料金明細（" + str(ce.today.isoformat()) + "現在）")
+    tocaro.set_text(os.environ["ENV_NAME"] + " " + str(ce.today.month) + "月の利用料金明細（" + str(ce.today.isoformat()) + "現在）")
     tocaro.set_color("info")
 
     costs = ce.get_costs()

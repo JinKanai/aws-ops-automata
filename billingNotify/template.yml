@@ -10,6 +10,9 @@ Parameters:
   TocaroUrl:
     Type: String
     Default: "paste tocaro webhook URL"
+  EnvironmentName:
+    Type: String
+    Default: "paste environment name. eg. TDAWS"
 
 Resources:
   BillingIamRole:
@@ -45,6 +48,7 @@ Resources:
       Environment:
         Variables:
           TOCARO_URL: !Ref TocaroUrl
+          ENV_NAME: !Ref EnvironmentName
           TZ: Asia/Tokyo
       Events:
         NotifytoTocaro:
