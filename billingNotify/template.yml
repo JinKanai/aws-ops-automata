@@ -1,15 +1,15 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: "AWS billing notify function for tocaro"
+Description: "AWS billing notify function for Messenger"
 
 Globals:
   Function:
     Timeout: 180
 
 Parameters:
-  TocaroUrl:
+  MessengerUrl:
     Type: String
-    Default: "paste tocaro webhook URL"
+    Default: "paste messenger webhook URL"
   EnvironmentName:
     Type: String
     Default: "paste environment name. eg. TDAWS"
@@ -43,15 +43,15 @@ Resources:
     Properties:
       CodeUri: functions/
       Handler: main.lambda_handler
-      Runtime: python3.6
+      Runtime: python3.7
       Role: !GetAtt BillingIamRole.Arn
       Environment:
         Variables:
-          TOCARO_URL: !Ref TocaroUrl
+          MESSENGER_URL: !Ref MessengerUrl
           ENV_NAME: !Ref EnvironmentName
           TZ: Asia/Tokyo
       Events:
-        NotifytoTocaro:
+        NotifytoMessenger:
           Type: Schedule
           Properties:
             Schedule: cron(30 23 ? * SUN-THU *)
@@ -64,8 +64,9 @@ Resources:
 
 Outputs:
   BillingNotifyFunction:
-    Description: "vortex aws billing notify"
+    Description: "AWS billing notify function"
     Value: !GetAtt BillingNotifyFunction.Arn
   BillingNotifyFunctionIamRole:
     Description: "Implicit IAM Role created for billing notify function"
     Value: !GetAtt BillingIamRole.Arn
+

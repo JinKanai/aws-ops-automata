@@ -4,6 +4,7 @@ from http_client import HttpClient
 
 
 class TocaroHandler:
+
     def __init__(self):
         self.message = {
             "text": "string",
@@ -28,7 +29,7 @@ class TocaroHandler:
         self.message["attachments"] = contents
 
     def send2tocaro(self):
-        tocaro_url = os.environ["TOCARO_URL"]
+        tocaro_url = os.environ["MESSENGER_URL"]
         headers = {"Content-type": "application/json"}
         body = HttpClient.post(tocaro_url, self.message, headers)
         return body
