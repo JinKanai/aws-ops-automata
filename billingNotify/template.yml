@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: "AWS billing notify function for Messenger"
+
+Globals:
+  Function:
+    Timeout: 180
+
+Parameters:
+  MessengerUrl:
+    Type: String
+    Default: "paste messenger webhook URL"
+  EnvironmentName:
+    Type: String
+    Default: "paste environment name. eg. TDAWS"
+
+Resources:
+  BillingIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: "BillingNotifyLambdaPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                  - "ce:GetCostAndUsage"
+                Resource: "*"
+
+  BillingNotifyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/
+      Handler: main.lambda_handler
+      Runtime: python3.7
+      Role: !GetAtt BillingIamRole.Arn
+      Environment:
+        Variables:
+          MESSENGER_URL: !Ref MessengerUrl
+          ENV_NAME: !Ref EnvironmentName
+          TZ: Asia/Tokyo
+      Events:
+        NotifytoMessenger:
+          Type: Schedule
+          Properties:
+            Schedule: cron(30 23 ? * SUN-THU *)
+
+  BillingNotifyLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${BillingNotifyFunction}
+      RetentionInDays: 14
+
+Outputs:
+  BillingNotifyFunction:
+    Description: "AWS billing notify function"
+    Value: !GetAtt BillingNotifyFunction.Arn
+  BillingNotifyFunctionIamRole:
+    Description: "Implicit IAM Role created for billing notify function"
+    Value: !GetAtt BillingIamRole.Arn
+
