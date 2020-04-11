@@ -26,7 +26,7 @@ class FxMarketStore:
 
 def test_rate():
     import json
-    with open("./tests/gaitame.json", "r") as f:
+    with open("../tests/gaitame.json", "r") as f:
         sample_data = json.load(f)
     f = FxMarketStore()
     f.quotes = sample_data

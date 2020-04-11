@@ -15,8 +15,12 @@ class HttpClient:
 
     @staticmethod
     def post(url, contents, headers):
-        req = urllib.request.Request(url, json.dumps(contents).encode(), headers=headers)
-        return HttpClient.fetch_api(req)
+        try:
+            req = urllib.request.Request(url, json.dumps(contents).encode(), headers=headers)
+            return HttpClient.fetch_api(req)
+        except ValueError as e:
+            print(e)
+            return False
 
     """
     @staticmethod
@@ -24,7 +28,6 @@ class HttpClient:
         req = urllib.request.Request(url, json.dumps(contents), headers=headers)
         req.get_method = lambda: "PUT"
         return HttpHandler.fetch_api(req)
-
     @staticmethod
     def delete(url, headers):
         req = urllib.request.Request(url, headers=headers)
@@ -34,11 +37,15 @@ class HttpClient:
 
     @staticmethod
     def fetch_api(req):
-        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+        context = None
+        # context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+        ssl._create_default_https_context = ssl._create_unverified_context
         body = None
         try:
             with urllib.request.urlopen(req, context=context) as res:
                 if req.get_method() != "DELETE":
+                    if "text/html" in res.info():
+                        pass
                     body = json.load(res)
 
         except urllib.error.HTTPError as e:
