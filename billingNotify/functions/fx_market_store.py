@@ -1,4 +1,4 @@
-from http_client import HttpClient
+from postkun.postkun.common.http_client import HttpClient
 
 
 class FxMarketStore:

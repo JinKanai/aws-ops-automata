@@ -2,7 +2,7 @@ import os
 
 from aws_billing_checker import AwsBillingChecker
 from fx_market_store import FxMarketStore
-from slack import SlackHandler
+from postkun.postkun.slack import SlackHandler
 
 
 def lambda_handler(event, context):
