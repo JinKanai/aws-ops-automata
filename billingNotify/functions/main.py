@@ -39,12 +39,14 @@ def lambda_handler(event, context):
 
 
 def construct_message(costs):
-    message = [{"title": "0.1USD以下のため明細表示省略", "value": None}]
+    message = []
     for service, cost in costs.items():
         cost = str(round(cost, 1))
         if cost != "0.0":
             d = {"title": service, "value": cost + "USD", "short": False}
             message.append(d)
+    if not message:
+        message = [{"title": "0.1USD以下のため明細表示省略", "value": None}]
     return message
 
 

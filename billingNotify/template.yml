@@ -54,7 +54,7 @@ Resources:
         NotifytoMessenger:
           Type: Schedule
           Properties:
-            Schedule: cron(30 23 ? * SUN-THU *)
+            Schedule: cron(30 23 ? * * *)
 
   BillingNotifyLogGroup:
     Type: AWS::Logs::LogGroup
