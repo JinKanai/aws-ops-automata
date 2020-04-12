@@ -40,14 +40,12 @@ class HttpClient:
         context = None
         # context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
         ssl._create_default_https_context = ssl._create_unverified_context
+        res = None
         body = None
         try:
-            with urllib.request.urlopen(req, context=context) as res:
-                if req.get_method() != "DELETE":
-                    if "text/html" in res.info():
-                        pass
-                    body = json.load(res)
-
+            res = urllib.request.urlopen(req, context=context)
+            if res.length:
+                body = json.load(res)
         except urllib.error.HTTPError as e:
             print("HTTP Error has detected. Abort. status code is {0}.".format(e.code))
             print(traceback.format_exc())
@@ -62,5 +60,6 @@ class HttpClient:
             print(traceback.format_exc())
             print(e)
             sys.exit(1)
-        else:
-            return body
+        finally:
+            res.close()
+        return body
